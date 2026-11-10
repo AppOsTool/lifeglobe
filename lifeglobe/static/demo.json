@@ -1,0 +1,384 @@
+{
+ "version": 1,
+ "updated": "2026-08-01",
+ "spheres": [
+  {
+   "id": "family",
+   "title": "Family",
+   "color": "#ff8f73"
+  },
+  {
+   "id": "work",
+   "title": "Work & money",
+   "color": "#f0d36a"
+  },
+  {
+   "id": "projects",
+   "title": "Projects",
+   "color": "#6fb4ff"
+  },
+  {
+   "id": "craft",
+   "title": "Craft",
+   "color": "#56d0a8"
+  },
+  {
+   "id": "values",
+   "title": "Values",
+   "color": "#c39bff"
+  },
+  {
+   "id": "self",
+   "title": "Myself",
+   "color": "#a6d66a"
+  }
+ ],
+ "nodes": [
+  {
+   "id": "me",
+   "type": "me",
+   "title": "Me",
+   "date": "2026-03-01",
+   "text": "A made-up person: designer, 34, two kids, wants a calmer life."
+  },
+  {
+   "id": "g_kids",
+   "type": "goal",
+   "title": "Be there for my kids",
+   "date": "2026-03-02",
+   "text": "I want to be home for dinner at least four evenings a week.",
+   "sphere": "family",
+   "quote": "Dinner together is the real meeting of the day",
+   "priority": true
+  },
+  {
+   "id": "p_sam",
+   "type": "people",
+   "title": "Sam, my partner",
+   "date": "2026-03-02",
+   "text": "We have been together nine years. Sam carries a lot at home when I work late.",
+   "sphere": "family"
+  },
+  {
+   "id": "e_recital",
+   "type": "experience",
+   "title": "Missed the school concert",
+   "date": "2026-04-11",
+   "text": "I stayed for a client call and missed Mia's first concert. She did not say anything, which was worse.",
+   "sphere": "family"
+  },
+  {
+   "id": "pr_phone",
+   "type": "principle",
+   "title": "No phone at the table",
+   "date": "2026-04-12",
+   "text": "Dinner is phone-free for everyone, me first.",
+   "sphere": "family"
+  },
+  {
+   "id": "g_trip",
+   "type": "goal",
+   "title": "Summer trip to the sea",
+   "date": "2026-05-20",
+   "text": "Two weeks without a laptop.",
+   "sphere": "family"
+  },
+  {
+   "id": "g_income",
+   "type": "goal",
+   "title": "Earn enough to breathe",
+   "date": "2026-03-03",
+   "text": "A steady income where one lost client does not mean panic.",
+   "sphere": "work",
+   "priority": true
+  },
+  {
+   "id": "pj_studio",
+   "type": "project",
+   "title": "My design studio",
+   "date": "2026-03-03",
+   "text": "Three people, mostly branding for small cafés and shops.",
+   "sphere": "work"
+  },
+  {
+   "id": "e_bigclient",
+   "type": "experience",
+   "title": "Landed a big client",
+   "date": "2026-06-02",
+   "text": "A chain of bakeries signed for a year. Great money, endless calls.",
+   "sphere": "work"
+  },
+  {
+   "id": "b_hustle",
+   "type": "belief",
+   "title": "More hours, more money",
+   "date": "2026-03-05",
+   "text": "If I stop answering at night, clients will leave.",
+   "sphere": "work"
+  },
+  {
+   "id": "pr_hours",
+   "type": "principle",
+   "title": "Calls end at six",
+   "date": "2026-07-01",
+   "text": "After six I answer only real emergencies.",
+   "sphere": "work",
+   "quote": "Six o'clock is a promise, not a wish"
+  },
+  {
+   "id": "pj_book",
+   "type": "project",
+   "title": "A book about small brands",
+   "date": "2026-04-02",
+   "text": "Writing a chapter a month about how tiny shops find their voice.",
+   "sphere": "projects"
+  },
+  {
+   "id": "pj_plants",
+   "type": "project",
+   "title": "Balcony garden",
+   "date": "2026-05-01",
+   "text": "Tomatoes and herbs with the kids.",
+   "sphere": "projects"
+  },
+  {
+   "id": "k_type",
+   "type": "knowledge",
+   "title": "Typography",
+   "date": "2026-03-04",
+   "text": "Ten years of choosing letters that feel like the place.",
+   "sphere": "craft"
+  },
+  {
+   "id": "pr_simple",
+   "type": "principle",
+   "title": "Cut until it breaks",
+   "date": "2026-03-04",
+   "text": "Remove things from a design until removing one more breaks it.",
+   "sphere": "craft"
+  },
+  {
+   "id": "e_burnout",
+   "type": "experience",
+   "title": "Burnout last winter",
+   "date": "2026-03-10",
+   "text": "For two months every logo looked the same to me.",
+   "sphere": "craft",
+   "priority": true
+  },
+  {
+   "id": "pr_listen",
+   "type": "principle",
+   "title": "Listen before drawing",
+   "date": "2026-03-11",
+   "text": "The first meeting is only questions.",
+   "sphere": "craft"
+  },
+  {
+   "id": "b_kind",
+   "type": "belief",
+   "title": "Kindness is a strength",
+   "date": "2026-03-06",
+   "text": "Being gentle with people never cost me a good result.",
+   "sphere": "values"
+  },
+  {
+   "id": "b_honest",
+   "type": "belief",
+   "title": "Say the hard thing early",
+   "date": "2026-03-06",
+   "text": "A difficult truth on Monday is cheaper than a crisis on Friday.",
+   "sphere": "values"
+  },
+  {
+   "id": "pr_family_first",
+   "type": "principle",
+   "title": "Family first, then clients",
+   "date": "2026-04-12",
+   "text": "When they clash, family wins — unless the rent is at stake.",
+   "sphere": "values",
+   "priority": true
+  },
+  {
+   "id": "s_health",
+   "type": "goal",
+   "title": "Sleep seven hours",
+   "date": "2026-03-07",
+   "text": "I wake up at night thinking about deadlines.",
+   "sphere": "self"
+  },
+  {
+   "id": "s_run",
+   "type": "goal",
+   "title": "Run three times a week",
+   "date": "2026-05-03",
+   "text": "Short runs in the park before the kids wake up.",
+   "sphere": "self"
+  },
+  {
+   "id": "e_child",
+   "type": "experience",
+   "title": "Grew up with a busy father",
+   "date": "2026-03-08",
+   "text": "I saw my dad mostly on Sundays. I promised myself to be different.",
+   "sphere": "self",
+   "quote": "I promised myself to be different"
+  },
+  {
+   "id": "b_enough",
+   "type": "belief",
+   "title": "I am enough without the hustle",
+   "date": "2026-07-02",
+   "text": "My worth is not the number of hours I work.",
+   "sphere": "self"
+  },
+  {
+   "id": "d_coffee",
+   "type": "experience",
+   "title": "Coffee after 4 pm keeps me up",
+   "date": "2026-08-01",
+   "text": "Noticed I sleep badly every day I drink coffee after four.",
+   "sphere": "self",
+   "draft": true
+  }
+ ],
+ "links": [
+  {
+   "s": "p_sam",
+   "t": "g_kids",
+   "rel": "tied"
+  },
+  {
+   "s": "e_recital",
+   "t": "g_kids",
+   "rel": "taught",
+   "note": "This is when I decided to change."
+  },
+  {
+   "s": "pr_phone",
+   "t": "g_kids",
+   "rel": "applies"
+  },
+  {
+   "s": "g_trip",
+   "t": "g_kids",
+   "rel": "supports"
+  },
+  {
+   "s": "pj_studio",
+   "t": "g_income",
+   "rel": "supports"
+  },
+  {
+   "s": "e_bigclient",
+   "t": "pj_studio",
+   "rel": "part"
+  },
+  {
+   "s": "e_bigclient",
+   "t": "g_income",
+   "rel": "supports"
+  },
+  {
+   "s": "b_hustle",
+   "t": "g_kids",
+   "rel": "contradicts",
+   "note": "Working every evening means not being at dinner."
+  },
+  {
+   "s": "pr_hours",
+   "t": "b_hustle",
+   "rel": "tied",
+   "note": "My answer to the fear of losing clients."
+  },
+  {
+   "s": "pr_hours",
+   "t": "g_kids",
+   "rel": "supports"
+  },
+  {
+   "s": "pj_book",
+   "t": "k_type",
+   "rel": "applies"
+  },
+  {
+   "s": "pj_plants",
+   "t": "g_kids",
+   "rel": "supports"
+  },
+  {
+   "s": "pr_simple",
+   "t": "k_type",
+   "rel": "tied"
+  },
+  {
+   "s": "e_burnout",
+   "t": "pr_hours",
+   "rel": "taught"
+  },
+  {
+   "s": "e_burnout",
+   "t": "s_health",
+   "rel": "tied"
+  },
+  {
+   "s": "pr_listen",
+   "t": "pj_studio",
+   "rel": "applies"
+  },
+  {
+   "s": "b_kind",
+   "t": "pr_listen",
+   "rel": "supports"
+  },
+  {
+   "s": "b_honest",
+   "t": "pr_hours",
+   "rel": "supports"
+  },
+  {
+   "s": "pr_family_first",
+   "t": "g_kids",
+   "rel": "derives"
+  },
+  {
+   "s": "pr_family_first",
+   "t": "g_income",
+   "rel": "tied",
+   "note": "Except when the rent is at stake."
+  },
+  {
+   "s": "e_child",
+   "t": "g_kids",
+   "rel": "taught"
+  },
+  {
+   "s": "e_child",
+   "t": "pr_family_first",
+   "rel": "taught"
+  },
+  {
+   "s": "b_enough",
+   "t": "b_hustle",
+   "rel": "tied",
+   "note": "The belief that replaces the old one."
+  },
+  {
+   "s": "s_run",
+   "t": "s_health",
+   "rel": "supports"
+  },
+  {
+   "s": "d_coffee",
+   "t": "s_health",
+   "rel": "tied"
+  },
+  {
+   "s": "e_bigclient",
+   "t": "pr_hours",
+   "rel": "tied",
+   "note": "The bakery calls test my six o'clock rule.",
+   "draft": true
+  }
+ ]
+}

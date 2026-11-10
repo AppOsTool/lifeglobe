@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lifeglobe"
+dynamic = ["version"]
+description = "A private, local map of how your life fits together — runs on your own computer."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = []
+keywords = ["life map", "mind map", "self-reflection", "local-first", "privacy", "ollama"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Environment :: Web Environment",
+  "Topic :: Utilities",
+]
+
+[project.optional-dependencies]
+claude = ["anthropic"]
+
+[project.scripts]
+lifeglobe = "lifeglobe.__main__:main"
+
+[tool.setuptools]
+packages = ["lifeglobe"]
+
+[tool.setuptools.dynamic]
+version = { attr = "lifeglobe.__version__" }
+
+[tool.setuptools.package-data]
+lifeglobe = ["static/*", "static/i18n/*", "static/vendor/*"]

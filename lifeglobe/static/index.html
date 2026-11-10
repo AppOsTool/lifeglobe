@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>lifeglobe</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%236fd0ff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%23f2b450'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1 id="appName">lifeglobe</h1>
+  <div class="viewsw" role="group" data-i18n-aria="view.label">
+    <button type="button" id="viewGlobe" aria-pressed="true" data-i18n="view.globe"></button>
+    <button type="button" id="viewMap" aria-pressed="false" data-i18n="view.map"></button>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="hdr-actions">
+    <input id="search" type="search" autocomplete="off" data-i18n-ph="search">
+    <button type="button" class="btn primary" id="thinkBtn" data-i18n="think.open"></button>
+    <button type="button" class="btn icon" id="settingsBtn" data-i18n-aria="settings.title">⚙</button>
+  </div>
+</header>
+<div class="demo-bar" id="demoBar" hidden><span data-i18n="demo.banner"></span> <a href="/" data-i18n="demo.leave"></a></div>
+<div class="chips" id="chips"></div>
+<main>
+  <div id="stage">
+    <svg id="graph" role="img"></svg>
+    <svg id="globe" role="img"></svg>
+    <div class="hud-read" id="hudRead"></div>
+    <div class="gctl" id="gctl">
+      <button type="button" id="zIn" data-i18n-aria="zoom.in">+</button>
+      <button type="button" id="zOut" data-i18n-aria="zoom.out">−</button>
+      <button type="button" id="zReset" data-i18n-aria="zoom.reset">⟲</button>
+    </div>
+    <div class="empty" id="empty" hidden>
+      <h2 data-i18n="empty.title"></h2>
+      <p data-i18n="empty.text"></p>
+      <div class="row"><button type="button" class="btn primary" id="emptyThink" data-i18n="think.open"></button>
+      <a class="btn" href="/?demo" data-i18n="demo.open"></a></div>
+    </div>
+    <div class="review" id="review" hidden></div>
+    <div class="hud-hint" id="hudHint" data-i18n="hint"></div>
+    <div class="legend" id="legend" aria-hidden="true"></div>
+  </div>
+  <aside id="panel" aria-live="polite"></aside>
+</main>
+
+<dialog id="thinkDlg">
+  <form method="dialog" class="dlg">
+    <h2 data-i18n="think.title"></h2>
+    <p class="sub" data-i18n="think.sub"></p>
+    <textarea id="thinkText" rows="6" data-i18n-ph="think.placeholder"></textarea>
+    <p class="msg" id="thinkMsg"></p>
+    <div class="row">
+      <button type="button" class="btn primary" id="thinkGo" data-i18n="think.go"></button>
+      <button type="button" class="btn" id="thinkManual" data-i18n="think.manual"></button>
+      <button type="submit" class="btn ghost" data-i18n="close"></button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="nodeDlg">
+  <form method="dialog" class="dlg">
+    <h2 data-i18n="node.title"></h2>
+    <label><span data-i18n="node.f.title"></span><input id="nTitle"></label>
+    <label><span data-i18n="node.f.text"></span><textarea id="nText" rows="3"></textarea></label>
+    <div class="grid2">
+      <label><span data-i18n="node.f.sphere"></span><select id="nSphere"></select></label>
+      <label><span data-i18n="node.f.type"></span><select id="nType"></select></label>
+    </div>
+    <label><span data-i18n="node.f.link"></span><select id="nLink"></select></label>
+    <div class="row">
+      <button type="button" class="btn primary" id="nSave" data-i18n="save"></button>
+      <button type="submit" class="btn ghost" data-i18n="close"></button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="settingsDlg">
+  <form method="dialog" class="dlg wide">
+    <h2 data-i18n="settings.title"></h2>
+    <label><span data-i18n="settings.language"></span><select id="sLang"></select></label>
+    <fieldset>
+      <legend data-i18n="settings.ai"></legend>
+      <label class="radio"><input type="radio" name="prov" value="ollama"> <b>Ollama</b> <small data-i18n="settings.ollama.note"></small></label>
+      <div class="sub-fields" data-for="ollama">
+        <label><span data-i18n="settings.url"></span><input id="sOllamaUrl"></label>
+        <label><span data-i18n="settings.model"></span><input id="sOllamaModel" list="ollamaModels"><datalist id="ollamaModels"></datalist></label>
+        <p class="sub" id="ollamaState"></p>
+      </div>
+      <label class="radio"><input type="radio" name="prov" value="openai"> <b>OpenAI</b> <small data-i18n="settings.cloud.note"></small></label>
+      <div class="sub-fields" data-for="openai">
+        <label><span data-i18n="settings.key"></span><input id="sOpenaiKey" type="password" autocomplete="off"></label>
+        <label><span data-i18n="settings.model"></span><input id="sOpenaiModel"></label>
+      </div>
+      <label class="radio"><input type="radio" name="prov" value="anthropic"> <b>Claude</b> <small data-i18n="settings.cloud.note"></small></label>
+      <div class="sub-fields" data-for="anthropic">
+        <label><span data-i18n="settings.key"></span><input id="sAnthropicKey" type="password" autocomplete="off"></label>
+        <label><span data-i18n="settings.model"></span><input id="sAnthropicModel"></label>
+        <p class="sub" data-i18n="settings.claude.extra"></p>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend data-i18n="settings.spheres"></legend>
+      <div id="sSpheres" class="spheres-edit"></div>
+    </fieldset>
+    <fieldset>
+      <legend data-i18n="settings.data"></legend>
+      <div class="row">
+        <button type="button" class="btn" id="sExport" data-i18n="settings.export"></button>
+        <label class="btn"><span data-i18n="settings.import"></span><input type="file" id="sImport" accept=".json,application/json" hidden></label>
+      </div>
+      <p class="sub" data-i18n="settings.data.note"></p>
+    </fieldset>
+    <p class="msg" id="settingsMsg"></p>
+    <div class="row">
+      <button type="button" class="btn primary" id="sSave" data-i18n="save"></button>
+      <button type="submit" class="btn ghost" data-i18n="close"></button>
+    </div>
+  </form>
+</dialog>
+
+<script src="/static/vendor/d3.min.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>
