@@ -155,17 +155,13 @@ class ServerTest(unittest.TestCase):
 
     def test_conflict_dialogue(self):
         self.req("PUT", "/api/brain", brain())
-        self.fake.reply = {"kind": "question", "question": "What matters more?", "summary": "", "edits": [],
-                           "principle_title": "", "principle_text": ""}
+        self.fake.reply = {"kind": "question", "text": "What matters more?", "principle": ""}
         st, r = self.req("POST", "/api/conflict", {"s": "b", "t": "a", "dialogue": []})
         self.assertEqual((st, r), (200, {"question": "What matters more?"}))
-        self.fake.reply = {"kind": "question", "question": "Again?", "summary": "Resolved: six o'clock.",
-                           "edits": [{"id": "a", "text": "new"}, {"id": "zzz", "text": "x"}],
-                           "principle_title": "Six o'clock", "principle_text": "Calls end at six."}
+        self.fake.reply = {"kind": "question", "text": "Resolved: six o'clock.", "principle": "Six o'clock — Calls end at six."}
         st, r = self.req("POST", "/api/conflict", {"s": "b", "t": "a", "dialogue": [{"q": "?", "a": "kids"}], "force": True})
         self.assertEqual(r["proposal"]["summary"], "Resolved: six o'clock.")       # force turns a question into a proposal
-        self.assertEqual(r["proposal"]["edits"], [{"id": "a", "text": "new"}])    # edits only for the two points
-        self.assertEqual(r["proposal"]["principle"]["title"], "Six o'clock")
+        self.assertEqual(r["proposal"]["principle"], {"title": "Six o'clock", "text": "Calls end at six."})
         self.assertIn("Enough questions", self.fake.calls[-1][1])
         self.assertEqual(self.req("POST", "/api/conflict", {"s": "a", "t": "b"})[0], 404)
 

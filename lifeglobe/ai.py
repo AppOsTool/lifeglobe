@@ -1,6 +1,7 @@
 """AI providers. Default is Ollama: the model runs on this computer and no text leaves it.
 OpenAI and Claude are optional and use the person's own key. Every call returns JSON that matches a schema."""
 import json
+import re
 import urllib.error
 import urllib.request
 
@@ -36,11 +37,22 @@ def _parse(text: str) -> dict:
         raise AIError("bad_answer", text[:200])
 
 
+CJK = re.compile(r"[\u3040-\u30ff\u3400-\u9fff]")
+
+
 def _ollama(s: dict, system: str, messages: list, schema: dict) -> dict:
+    """Small local models loop inside strict schema grammars, so we use plain JSON mode with the schema described,
+    a hard cap on answer length, and one retry if the answer drifts into another script."""
     url = s["ollama_url"].rstrip("/") + "/api/chat"
-    body = {"model": s["ollama_model"], "stream": False, "format": schema,
-            "messages": [{"role": "system", "content": system}] + messages}
-    return _parse(_post(url, body, {}).get("message", {}).get("content", ""))
+    body = {"model": s["ollama_model"], "stream": False, "format": "json",
+            "options": {"temperature": 0.4, "num_predict": 900},
+            "messages": [{"role": "system", "content": system + "\nAnswer with ONE JSON object that follows this JSON "
+                          "schema, nothing else:\n" + json.dumps(schema, ensure_ascii=False)}] + messages}
+    for attempt in range(2):
+        text = _post(url, body, {}).get("message", {}).get("content", "")
+        if not CJK.search(text):
+            return _parse(text)
+    raise AIError("bad_answer", "drifted into another language")
 
 
 def _openai(s: dict, system: str, messages: list, schema: dict) -> dict:

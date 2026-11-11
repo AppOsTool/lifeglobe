@@ -841,7 +841,7 @@ function build() {
     btn.disabled = true; $("thinkMsg").textContent = t("ai.thinking");
     try {
       const r = await api("/api/think", { method: "POST", body: JSON.stringify({ text }) });
-      try { sessionStorage.setItem("lg.select", r.nodes[0].id); } catch (e) { }
+      try { r.nodes[0] && sessionStorage.setItem("lg.select", r.nodes[0].id); } catch (e) { }
       location.reload();
     } catch (e) { $("thinkMsg").textContent = aiError(e); btn.disabled = false; }
   };
@@ -994,7 +994,7 @@ $("intro").addEventListener("click", async e => {
   try {
     const r = await api("/api/think", { method: "POST", body: JSON.stringify({ text: `${t("intro.q" + (step + 1))}\n${ans}` }) });
     setIntroStep(step + 1);
-    try { sessionStorage.setItem("lg.select", r.nodes[0].id); } catch (err) { }
+    try { r.nodes[0] && sessionStorage.setItem("lg.select", r.nodes[0].id); } catch (err) { }
     location.reload();
   } catch (err) { showIntro(aiError(err)); }
 });

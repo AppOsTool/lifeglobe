@@ -51,7 +51,8 @@ python -m lifeglobe
 ### Local AI with Ollama (recommended)
 
 1. Install Ollama from [ollama.com](https://ollama.com).
-2. `ollama pull qwen2.5:7b` — a good multilingual model for an ordinary laptop. Pick a bigger one if your machine allows.
+2. `ollama pull qwen2.5:7b` — a good multilingual model for an ordinary laptop (8 GB RAM is enough).
+   With 16 GB or more, `qwen2.5:14b` follows instructions noticeably better; set it in ⚙ Settings → Model.
 3. Start lifeglobe. That's it.
 
 ### OpenAI or Claude instead
