@@ -967,6 +967,7 @@ function showIntro(msg = "") {
   const step = introStep();
   const box = $("intro");
   if (step === null) { box.hidden = true; return; }
+  $("empty").hidden = true;                 // the globe itself fills in while you answer
   if (step >= INTRO_STEPS) {
     setIntroStep(null);
     box.hidden = false;
