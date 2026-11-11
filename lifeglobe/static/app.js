@@ -185,6 +185,7 @@ function build() {
     .on("drag", (e, n) => { if (n.type === "me" || n.type === "sphere") return; n.x = n.fx = e.x; n.y = n.fy = e.y; drawMap(); }));
   function fit() {
     const W = stage.clientWidth, H = stage.clientHeight, R = outerR + 75;
+    if (!W || !H) return;
     svg.call(zoom.transform, d3.zoomIdentity.translate(W / 2, H / 2).scale(Math.min(W / (2 * R), H / (2 * R), 1.3)));
   }
   window.addEventListener("resize", () => { if (!$("graph").hasAttribute("hidden")) fit(); });
@@ -258,7 +259,7 @@ function build() {
     highlight(id);
     renderPanel(byId.get(id));
     globe.onSelect(id, focus);
-    if (focus && id !== "me" && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (focus && id !== "me" && !$("graph").hasAttribute("hidden") && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
       const n = byId.get(id);
       svg.transition().duration(450).call(zoom.translateTo, n.x, n.y);
     }
@@ -603,7 +604,47 @@ function build() {
       setMatch(m) { matchSet = m; dirty = true; },
       zoom(f) { k = clamp(k * f, 0.7, 2.6); lastTouch = performance.now(); setSize(); },
       reset() { k = 1; inert = null; tgt = { yaw: -0.55, pitch: 0.34 }; setSize(); select("me", false); },
-      show(on) { active = on; if (on) setSize(); }
+      show(on) { active = on; if (on) setSize(); },
+      paint(ctx, cx, cy, R) {
+        const pr = p => { const r = rot(p), f = 1 / (1 - r[2] * 0.18); return { x: cx + r[0] * R * f, y: cy - r[1] * R * f, z: r[2], f }; };
+        const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+        g.addColorStop(0, "rgba(111,208,255,0.02)"); g.addColorStop(0.72, "rgba(111,208,255,0.05)"); g.addColorStop(1, "rgba(111,208,255,0.17)");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2 * Math.PI); ctx.fill();
+        ctx.strokeStyle = "rgba(111,208,255,0.5)"; ctx.lineWidth = 2; ctx.stroke();
+        GRAT.forEach(line => {
+          let prev = null;
+          line.forEach(p => {
+            const q = pr(p);
+            if (prev) { ctx.strokeStyle = `rgba(111,208,255,${prev.z + q.z >= 0 ? 0.2 : 0.06})`; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(prev.x, prev.y); ctx.lineTo(q.x, q.y); ctx.stroke(); }
+            prev = q;
+          });
+        });
+        const c0 = pr([0, 0, 0]);
+        SPHERES.forEach(s => {
+          const h = pr(P.get("hub_" + s.id));
+          ctx.strokeStyle = s.color; ctx.globalAlpha = 0.55; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(c0.x, c0.y); ctx.lineTo(h.x, h.y); ctx.stroke();
+          ctx.globalAlpha = 0.14;
+          nodes.filter(n => n.sphere === s.id && n.type !== "sphere" && !n._removed).forEach(n => { const q = pr(P.get(n.id)); ctx.beginPath(); ctx.moveTo(h.x, h.y); ctx.lineTo(q.x, q.y); ctx.stroke(); });
+          ctx.globalAlpha = 1;
+        });
+        const items = nodes.filter(n => !n._removed).map(n => ({ n, q: pr(P.get(n.id)) })).sort((a, b) => a.q.z - b.q.z);
+        items.forEach(({ n, q }) => {
+          const alpha = n.type === "me" ? 1 : 0.25 + 0.75 * (q.z + 1) / 2;
+          ctx.globalAlpha = alpha;
+          if (n.type === "me") {
+            ctx.fillStyle = "#f2b450"; ctx.beginPath(); ctx.arc(q.x, q.y, 26, 0, 2 * Math.PI); ctx.fill();
+          } else if (n.type === "sphere") {
+            const c = SPH[n.sphere].color;
+            ctx.strokeStyle = c; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(q.x, q.y, 18 * q.f, 0, 2 * Math.PI); ctx.stroke();
+            ctx.fillStyle = c; ctx.beginPath(); ctx.arc(q.x, q.y, 7 * q.f, 0, 2 * Math.PI); ctx.fill();
+          } else {
+            const r = (n.priority ? 13 : 6 + Math.sqrt(degree.get(n.id) || 1) * 1.6) * q.f;
+            if (n.priority) { ctx.fillStyle = colorOf(n); ctx.globalAlpha = alpha * 0.22; ctx.beginPath(); ctx.arc(q.x, q.y, r * 2.2, 0, 2 * Math.PI); ctx.fill(); ctx.globalAlpha = alpha; }
+            ctx.fillStyle = colorOf(n); ctx.beginPath(); ctx.arc(q.x, q.y, r, 0, 2 * Math.PI); ctx.fill();
+          }
+        });
+        ctx.globalAlpha = 1;
+      }
     };
   })();
 
@@ -846,6 +887,12 @@ function build() {
   try { start = sessionStorage.getItem("lg.select") || "me"; sessionStorage.removeItem("lg.select"); } catch (e) { }
   select(start, start !== "me");
   setupSettings(SPHERES);
+  GLOBE_PAINT = (ctx, cx, cy, R) => globe.paint(ctx, cx, cy, R);
+  $("emptyIntro").onclick = startIntro;
+  $("thinkIntro").onclick = startIntro;
+  $("sShare").onclick = sharePicture;
+  if (DEMO) { $("emptyIntro").hidden = true; }
+  else showIntro();
 }
 
 /* ======================= settings ======================= */
@@ -909,5 +956,81 @@ function setupSettings(SPHERES) {
     } catch (err) { $("settingsMsg").textContent = t("settings.importFailed"); }
   };
 }
+
+
+/* ======================= introduction: 8 questions, the globe fills as you answer ======================= */
+const INTRO_STEPS = 8;
+function introStep() { try { const v = sessionStorage.getItem("lg.intro"); return v === null ? null : +v; } catch (e) { return null; } }
+function setIntroStep(v) { try { v === null ? sessionStorage.removeItem("lg.intro") : sessionStorage.setItem("lg.intro", String(v)); } catch (e) { } }
+function startIntro() { setIntroStep(0); $("thinkDlg").open && $("thinkDlg").close(); showIntro(); }
+function showIntro(msg = "") {
+  const step = introStep();
+  const box = $("intro");
+  if (step === null) { box.hidden = true; return; }
+  if (step >= INTRO_STEPS) {
+    setIntroStep(null);
+    box.hidden = false;
+    box.innerHTML = `<div class="msg">${esc(t("intro.done"))}</div><div class="acts"><button type="button" data-i="close">${esc(t("close"))}</button></div>`;
+    return;
+  }
+  box.hidden = false;
+  box.innerHTML = `<div class="top"><span>${esc(t("intro.title"))}</span><span>${step + 1} / ${INTRO_STEPS}</span></div>
+    <h3>${esc(t("intro.q" + (step + 1)))}</h3>
+    <textarea id="introAns" placeholder="${esc(t("intro.ph"))}"></textarea>
+    ${msg ? `<div class="msg">${esc(msg)}</div>` : ""}
+    <div class="acts"><button type="button" class="ok" data-i="next">${esc(t("intro.next"))}</button>
+    <button type="button" data-i="skip">${esc(t("skip"))}</button><button type="button" data-i="stop">${esc(t("intro.stop"))}</button></div>`;
+  $("introAns").focus();
+}
+$("intro").addEventListener("click", async e => {
+  const a = e.target.closest("[data-i]")?.dataset.i; if (!a) return;
+  const step = introStep();
+  if (a === "close" || a === "stop") { setIntroStep(null); $("intro").hidden = true; return; }
+  if (a === "skip") { setIntroStep(step + 1); showIntro(); return; }
+  const ans = ($("introAns")?.value || "").trim();
+  if (!ans) return;
+  e.target.disabled = true;
+  $("intro").querySelector(".acts").insertAdjacentHTML("beforebegin", `<div class="msg">${esc(t("ai.thinking"))}</div>`);
+  try {
+    const r = await api("/api/think", { method: "POST", body: JSON.stringify({ text: `${t("intro.q" + (step + 1))}\n${ans}` }) });
+    setIntroStep(step + 1);
+    try { sessionStorage.setItem("lg.select", r.nodes[0].id); } catch (err) { }
+    location.reload();
+  } catch (err) { showIntro(aiError(err)); }
+});
+
+/* ======================= a picture to share: points without any personal text ======================= */
+function sharePicture() {
+  const W = 1080, H = 1920, c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const ctx = c.getContext("2d");
+  ctx.fillStyle = "#0e1320"; ctx.fillRect(0, 0, W, H);
+  const font = (w, px) => `${w} ${px}px "Avenir Next", "Segoe UI", system-ui, sans-serif`;
+  ctx.fillStyle = "#ebe8e0"; ctx.font = font(700, 64); ctx.textAlign = "center";
+  ctx.fillText(t("share.headline"), W / 2, 190);
+  ctx.fillStyle = "#8e97ad"; ctx.font = font(500, 34);
+  const pts = DATA.nodes.filter(n => n.type !== "me").length, cons = DATA.links.filter(l => l.rel === "contradicts").length;
+  ctx.fillText([plural0(pts, "stats.points"), plural0(DATA.spheres.length, "stats.spheres"), cons ? plural0(cons, "stats.conflicts") : ""].filter(Boolean).join("  ·  "), W / 2, 255);
+  GLOBE_PAINT(ctx, W / 2, 900, 420);
+  ctx.textAlign = "left"; ctx.font = font(600, 36);
+  const per = Object.fromEntries(DATA.spheres.map(s => [s.id, DATA.nodes.filter(n => n.sphere === s.id).length]));
+  DATA.spheres.forEach((s, i) => {
+    const col = i % 2, row = Math.floor(i / 2), x = 150 + col * 430, y = 1470 + row * 80;
+    ctx.fillStyle = s.color; ctx.beginPath(); ctx.arc(x, y - 12, 14, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = "#ebe8e0"; ctx.fillText(`${s.title}  ${per[s.id]}`, x + 32, y);
+  });
+  ctx.textAlign = "center"; ctx.fillStyle = "#6fd0ff"; ctx.font = font(600, 34);
+  ctx.fillText("lifeglobe — " + t("share.tagline"), W / 2, H - 110);
+  c.toBlob(b => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(b); a.download = `lifeglobe-${today()}.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+  }, "image/png");
+}
+function plural0(n, key) {
+  const k = `${key}.${new Intl.PluralRules(SETTINGS.language || "en").select(n)}`;
+  return t(I18N[k] !== undefined ? k : `${key}.other`, { n });
+}
+let GLOBE_PAINT = () => { };
 
 boot().catch(e => { document.body.innerHTML = `<p style="padding:24px">Could not start: ${esc(e.message)}</p>`; });

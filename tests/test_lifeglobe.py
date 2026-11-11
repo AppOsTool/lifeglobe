@@ -177,6 +177,16 @@ class ServerTest(unittest.TestCase):
         self.assertEqual(self.req("POST", "/api/think", {"text": "  "})[0], 400)
 
 
+class TranslationsTest(unittest.TestCase):
+    def test_every_language_has_every_text(self):
+        folder = Path(__file__).resolve().parent.parent / "lifeglobe" / "static" / "i18n"
+        en = set(json.loads((folder / "en.json").read_text(encoding="utf-8")))
+        for f in folder.glob("*.json"):
+            keys = set(json.loads(f.read_text(encoding="utf-8")))
+            plural_extras = {k for k in keys - en if k.rsplit(".", 1)[-1] in ("zero", "two", "few", "many")}
+            self.assertEqual(keys - plural_extras, en, f.name)
+
+
 class SchemaTest(unittest.TestCase):
     def test_schemas_are_strict(self):
         for schema in (tasks.THINK_SCHEMA, tasks.CONFLICT_SCHEMA):

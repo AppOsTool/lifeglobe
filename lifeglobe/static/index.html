@@ -36,10 +36,12 @@
     <div class="empty" id="empty" hidden>
       <h2 data-i18n="empty.title"></h2>
       <p data-i18n="empty.text"></p>
-      <div class="row"><button type="button" class="btn primary" id="emptyThink" data-i18n="think.open"></button>
+      <div class="row"><button type="button" class="btn primary" id="emptyIntro" data-i18n="intro.start"></button>
+      <button type="button" class="btn" id="emptyThink" data-i18n="think.open"></button>
       <a class="btn" href="/?demo" data-i18n="demo.open"></a></div>
     </div>
     <div class="review" id="review" hidden></div>
+    <div class="review" id="intro" hidden></div>
     <div class="hud-hint" id="hudHint" data-i18n="hint"></div>
     <div class="legend" id="legend" aria-hidden="true"></div>
   </div>
@@ -55,6 +57,7 @@
     <div class="row">
       <button type="button" class="btn primary" id="thinkGo" data-i18n="think.go"></button>
       <button type="button" class="btn" id="thinkManual" data-i18n="think.manual"></button>
+      <button type="button" class="btn" id="thinkIntro" data-i18n="intro.start"></button>
       <button type="submit" class="btn ghost" data-i18n="close"></button>
     </div>
   </form>
@@ -112,6 +115,8 @@
         <label class="btn"><span data-i18n="settings.import"></span><input type="file" id="sImport" accept=".json,application/json" hidden></label>
       </div>
       <p class="sub" data-i18n="settings.data.note"></p>
+      <div class="row"><button type="button" class="btn" id="sShare" data-i18n="share.button"></button></div>
+      <p class="sub" data-i18n="share.note"></p>
     </fieldset>
     <p class="msg" id="settingsMsg"></p>
     <div class="row">

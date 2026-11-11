@@ -6,7 +6,7 @@ It runs on **your own computer**. Your map is one file on your disk. No account,
 
 *[Русская версия](README.ru.md)*
 
-<!-- demo.gif goes here -->
+![lifeglobe: turn the globe, then zoom into one sphere of life](docs/demo.gif)
 
 ## Why
 
@@ -18,6 +18,8 @@ Life is not a list. A late meeting is about money, but also about the kids' dinn
 - **Contradictions** shown in red. The AI asks you a few short questions and helps you resolve them in your own words.
 - **Focus** — zoom in and the sphere in front of you stays sharp while the rest fades.
 - **Timeline** — press ▶ and watch how your map grew.
+- **A gentle start** — eight short questions, and your globe fills in as you answer.
+- **A picture to share** — your globe as a story-sized image: points, spheres and counts, no personal text.
 
 ## Private by design
 
